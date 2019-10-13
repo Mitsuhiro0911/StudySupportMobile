@@ -15,4 +15,6 @@
     <string name="menu_send">Send</string>
 
     <string name="execute_button">DBアクセス</string>
+    <string name="question">問題</string>
+    <string name="answer">解答</string>
 </resources>

@@ -8,11 +8,14 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.view.MenuItem
 import android.support.v4.widget.DrawerLayout
 import android.support.design.widget.NavigationView
+import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     /**
@@ -106,34 +109,50 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private inner class ButtonClicker : View.OnClickListener {
-        override fun onClick(view: View) {
-            //データベースヘルパーオブジェクトからデータベース接続オブジェクトを取得
-            val db = _helper.writableDatabase
+        //データベースヘルパーオブジェクトからデータベース接続オブジェクトを取得
+        val db = _helper.writableDatabase
 
+        override fun onClick(view: View) {
             val sqlInsert = "INSERT INTO qa_set (_id, question, answer, category) VALUES (?, ?, ?, ?)"
             //SQL文字列を元にプリペアドステートメントを取得
             val stmt = db.compileStatement(sqlInsert)
             //変数のバインド
-            stmt.bindLong(1, 1)
-            stmt.bindString(2, "Kotlinを開発した会社は")
-            stmt.bindString(3, "JetBrains")
+            val question = findViewById(R.id.question) as EditText
+            val answer = findViewById(R.id.answer) as EditText
+            val id = getLastId() + 1
+            stmt.bindLong(1, id.toLong())
+            stmt.bindString(2, "${question.text}")
+            stmt.bindString(3, "${answer.text}")
             stmt.bindString(4, "プログラミング")
             //SQLの実行。
             stmt.executeInsert()
 
-            // INSERTしたデータをSELECT
-            val sql = "SELECT * FROM qa_set WHERE _id = 1"
-            // SQLの実行
-            val cursor = db.rawQuery(sql, null)
-            var question = ""
-            var answer = ""
-            while(cursor.moveToNext()) {
-                val idxQuestion = cursor.getColumnIndex("question")
-                question = cursor.getString(idxQuestion)
-                val idxAnswer = cursor.getColumnIndex("answer")
-                answer = cursor.getString(idxAnswer)
+//            // INSERTしたデータをSELECT
+//            val sql = "SELECT * FROM qa_set WHERE _id = 2"
+//            // SQLの実行
+//            val cursor = db.rawQuery(sql, null)
+//            var question = ""
+//            var answer = ""
+//            while(cursor.moveToNext()) {
+//                val idxQuestion = cursor.getColumnIndex("question")
+//                question = cursor.getString(idxQuestion)
+//                val idxAnswer = cursor.getColumnIndex("answer")
+//                answer = cursor.getString(idxAnswer)
+//                Log.d("sql", "${question}　→　${answer}")
+//            }
+        }
+
+        /**
+         * qa_setテーブルの末尾のID(最大値)を返す
+         */
+        private fun getLastId(): Int {
+            val cursor = db.rawQuery("SELECT MAX(_id) FROM qa_set", null)
+            if (cursor.moveToNext()) {
+                return cursor.getInt(0)
+            } else {
+                // qa_setテーブルにデータがないため、0を返す
+                return 0
             }
-            Log.d("sql", "${question}　→　${answer}")
         }
     }
 }
