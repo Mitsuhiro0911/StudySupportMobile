@@ -26,7 +26,7 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
         sb.append("CREATE TABLE qa_set (")
         sb.append("_id INTEGER PRIMARY KEY,")
         sb.append("question TEXT,")
-        sb.append("answer TEXT")
+        sb.append("answer TEXT,")
         sb.append("category TEXT")
         sb.append(");")
         val sql = sb.toString()
