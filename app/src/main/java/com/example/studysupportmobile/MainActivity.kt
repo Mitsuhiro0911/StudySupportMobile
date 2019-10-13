@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout
 import android.support.design.widget.NavigationView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.Menu
 import android.view.View
 
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val executeButton = findViewById<View>(R.id.execute_button)
 
-        executeButton.setOnClickListener {}
+        executeButton.setOnClickListener(ButtonClicker())
 
     }
 
@@ -102,5 +103,37 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //ヘルパーオブジェクトの開放。
         _helper.close()
         super.onDestroy()
+    }
+
+    private inner class ButtonClicker : View.OnClickListener {
+        override fun onClick(view: View) {
+            //データベースヘルパーオブジェクトからデータベース接続オブジェクトを取得
+            val db = _helper.writableDatabase
+
+            val sqlInsert = "INSERT INTO qa_set (_id, question, answer, category) VALUES (?, ?, ?, ?)"
+            //SQL文字列を元にプリペアドステートメントを取得
+            val stmt = db.compileStatement(sqlInsert)
+            //変数のバインド
+            stmt.bindLong(1, 1)
+            stmt.bindString(2, "Kotlinを開発した会社は")
+            stmt.bindString(3, "JetBrains")
+            stmt.bindString(4, "プログラミング")
+            //SQLの実行。
+            stmt.executeInsert()
+
+            // INSERTしたデータをSELECT
+            val sql = "SELECT * FROM qa_set WHERE _id = 1"
+            // SQLの実行
+            val cursor = db.rawQuery(sql, null)
+            var question = ""
+            var answer = ""
+            while(cursor.moveToNext()) {
+                val idxQuestion = cursor.getColumnIndex("question")
+                question = cursor.getString(idxQuestion)
+                val idxAnswer = cursor.getColumnIndex("answer")
+                answer = cursor.getString(idxAnswer)
+            }
+            Log.d("sql", "${question}　→　${answer}")
+        }
     }
 }
