@@ -27,7 +27,12 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
         sb.append("_id INTEGER PRIMARY KEY,")
         sb.append("question TEXT,")
         sb.append("answer TEXT,")
-        sb.append("category TEXT")
+        sb.append("category1 TEXT,")
+        sb.append("category2 TEXT,")
+        sb.append("category3 TEXT,")
+        sb.append("study_times INTEGER,")
+        sb.append("register_date TEXT,")
+        sb.append("last_study_date TEXT")
         sb.append(");")
         val sql = sb.toString()
 

@@ -11,16 +11,18 @@ import android.support.design.widget.NavigationView
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.format.Time
 import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    /**
-     * データベースヘルパーオブジェクト。
-     */
+
+    // データベースヘルパーオブジェクト。
     private val _helper = DatabaseHelper(this@MainActivity)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,17 +115,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val db = _helper.writableDatabase
 
         override fun onClick(view: View) {
-            val sqlInsert = "INSERT INTO qa_set (_id, question, answer, category) VALUES (?, ?, ?, ?)"
+            val sqlInsert = "INSERT INTO qa_set (_id, question, answer, category1, category2, category3, study_times, register_date, last_study_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
             //SQL文字列を元にプリペアドステートメントを取得
             val stmt = db.compileStatement(sqlInsert)
             //変数のバインド
             val question = findViewById(R.id.question) as EditText
             val answer = findViewById(R.id.answer) as EditText
             val id = getLastId() + 1
+            val simpleDateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+            val time = simpleDateFormat.format(Date(System.currentTimeMillis()))
             stmt.bindLong(1, id.toLong())
             stmt.bindString(2, "${question.text}")
             stmt.bindString(3, "${answer.text}")
             stmt.bindString(4, "プログラミング")
+            stmt.bindString(5, "Kotlin")
+            stmt.bindString(6, "DB")
+            stmt.bindLong(7, 1)
+            stmt.bindString(8, time)
+            stmt.bindString(9, time)
             //SQLの実行。
             stmt.executeInsert()
 
