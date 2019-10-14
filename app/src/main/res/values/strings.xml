@@ -17,4 +17,7 @@
     <string name="execute_button">DBアクセス</string>
     <string name="question">問題</string>
     <string name="answer">解答</string>
+    <string name="category1_label">カテゴリー大分類</string>
+    <string name="category2_label">カテゴリー中分類</string>
+    <string name="category3_label">カテゴリー小分類</string>
 </resources>
